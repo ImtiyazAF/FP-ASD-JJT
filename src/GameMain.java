@@ -39,10 +39,15 @@ public class GameMain extends JPanel {
                     if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
                             && board.cells[row][col].content == Seed.NO_SEED) {
                         // Update cells[][] and return the new game state after the move
-                        currentState = board.stepGame(currentPlayer, row, col);
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-                    }
+                        for (int rowI = Board.ROWS -1; rowI >= 0; rowI--) {
+                            if (board.cells[row][col].content == Seed.NO_SEED) {
+                                board.cells[row][col].content = currentPlayer; // Make a move
+                                currentState = board.stepGame(currentPlayer, rowI, col); // update state
+                                // Switch player
+                                currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                                break;
+                            }
+                        }     }
                 } else {        // game over
                     newGame();  // restart the game
                 }
