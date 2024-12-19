@@ -28,31 +28,42 @@ public class GameMain extends JPanel {
         // This JPanel fires MouseEvent
         super.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {  // mouse-clicked handler
+            public void mouseClicked(MouseEvent e) {
                 int mouseX = e.getX();
-                int mouseY = e.getY();
-                // Get the row and column clicked
-                int row = mouseY / Cell.SIZE;
-                int col = mouseX / Cell.SIZE;
+                int col = mouseX / Cell.SIZE; // Determine the column clicked
 
                 if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                            && board.cells[row][col].content == Seed.NO_SEED) {
-                        // Update cells[][] and return the new game state after the move
-                        for (int rowI = Board.ROWS -1; rowI >= 0; rowI--) {
-                            if (board.cells[row][col].content == Seed.NO_SEED) {
-                                board.cells[row][col].content = currentPlayer; // Make a move
-                                currentState = board.stepGame(currentPlayer, rowI, col); // update state
-                                // Switch player
+                    // Player's move
+                    if (col >= 0 && col < Board.COLS) {
+                        int row = board.dropPiece(currentPlayer, col); // Drop piece in the column
+                        if (row != -1) { // Valid move
+                            currentState = board.stepGame(currentPlayer, row, col); // Update state
+                            repaint();
+
+                            // If the game is still ongoing, let the computer play
+                            if (currentState == State.PLAYING) {
                                 currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-                                break;
+                                computerMove();
                             }
-                        }     }
-                } else {        // game over
-                    newGame();  // restart the game
+                        }
+                    }
+                } else {
+                    newGame(); // Restart the game if it's over
                 }
-                // Refresh the drawing canvas
-                repaint();  // Callback paintComponent().
+                repaint();
+            }
+
+            /** Computer makes its move */
+            private void computerMove() {
+                int[] move = board.getBestMove(currentPlayer); // Get the best move
+                if (move != null) {
+                    int row = move[0];
+                    int col = move[1];
+                    board.cells[row][col].content = currentPlayer; // Computer's move
+                    currentState = board.stepGame(currentPlayer, row, col); // Update state
+                    currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS; // Switch turn
+                }
+                repaint();
             }
         });
 
