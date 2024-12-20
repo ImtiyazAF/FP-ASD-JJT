@@ -92,6 +92,7 @@ public class Board {
             }
         }
     }
+
     /** Drops a piece in the specified column. Returns the row, or -1 if the column is full. */
     public int dropPiece(Seed seed, int col) {
         for (int row = ROWS - 1; row >= 0; row--) {
