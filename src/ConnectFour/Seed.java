@@ -1,10 +1,12 @@
+package ConnectFour;
+
 import java.awt.Image;
 import java.net.URL;
 import javax.swing.ImageIcon;
 /**
  * This enum is used by:
  * 1. Player: takes value of CROSS or NOUGHT
- * 2. Cell content: takes value of CROSS, NOUGHT, or NO_SEED.
+ * 2. ConnectFour.Cell content: takes value of CROSS, NOUGHT, or NO_SEED.
  *
  * We also attach a display image icon (text or image) for the items.
  *   and define the related variable/constructor/getter.
@@ -14,7 +16,7 @@ import javax.swing.ImageIcon;
  * Ideally, we should define two enums with inheritance, which is,
  *  however, not supported.
  */
-public enum Seed {   // to save as "Seed.java"
+public enum Seed {   // to save as "ConnectFour.Seed.java"
     CROSS("X", "images/cross.gif"),   // displayName, imageFilename
     NOUGHT("O", "images/not.gif"),
     NO_SEED(" ", null);

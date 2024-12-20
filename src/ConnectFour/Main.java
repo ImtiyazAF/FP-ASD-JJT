@@ -1,5 +1,7 @@
+package ConnectFour;
+
 import javax.swing.*;
-import GameMain.GameMainTT;
+import TicTacToe.GameMainTT;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,7 +11,7 @@ public class Main {
 //            public void run() {
 //                JFrame frame = new JFrame("TTT");
 //                // Set the content-pane of the JFrame to an instance of main JPanel
-//                frame.setContentPane(new GameMain());
+//                frame.setContentPane(new ConnectFour.GameMain());
 //                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //                frame.pack();
 //                frame.setLocationRelativeTo(null); // center the application window

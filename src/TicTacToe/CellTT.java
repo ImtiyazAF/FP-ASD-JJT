@@ -1,11 +1,11 @@
-package Cell;
+package TicTacToe;
 
-import Seed.SeedTT;
+import TicTacToe.SeedTT;
 
 /**
- * The Cell class models each individual cell of the TTT 3x3 grid.
+ * The ConnectFour.Cell class models each individual cell of the TTT 3x3 grid.
  */
-public class CellTT {  // save as "Cell.java"
+public class CellTT {  // save as "ConnectFour.Cell.java"
     // Define properties (package-visible)
     /** Content of this cell (CROSS, NOUGHT, NO_SEED) */
     public SeedTT content;

@@ -1,4 +1,4 @@
-package State;
+package TicTacToe;
 
 public enum StateTT {
     PLAYINGTT,    // Representing state where the game is ongoing

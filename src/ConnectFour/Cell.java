@@ -1,6 +1,10 @@
+package ConnectFour;
+
+import ConnectFour.Seed;
+
 import java.awt.*;
 /**
- * The Cell class models each individual cell of the game board.
+ * The ConnectFour.Cell class models each individual cell of the game board.
  */
 public class Cell {
     // Define named constants for drawing
@@ -10,7 +14,7 @@ public class Cell {
     public static final int SEED_SIZE = SIZE - PADDING * 2;
 
     // Define properties (package-visible)
-    /** Content of this cell (Seed.EMPTY, Seed.CROSS, or Seed.NOUGHT) */
+    /** Content of this cell (ConnectFour.Seed.EMPTY, ConnectFour.Seed.CROSS, or ConnectFour.Seed.NOUGHT) */
     Seed content;
     /** Row and column of this cell */
     int row, col;
@@ -29,7 +33,7 @@ public class Cell {
 
     /** Paint itself on the graphics canvas, given the Graphics context */
     public void paint(Graphics g) {
-        // Draw the Seed if it is not empty
+        // Draw the ConnectFour.Seed if it is not empty
         int x1 = col * SIZE + PADDING;
         int y1 = row * SIZE + PADDING;
         if (content == Seed.CROSS || content == Seed.NOUGHT) {

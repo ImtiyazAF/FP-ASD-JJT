@@ -1,14 +1,10 @@
-package Board;
+package TicTacToe;
 
-import Cell.CellTT;
-import Seed.SeedTT;
-import State.StateTT;
-import GameMain.GameMainTT;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Board class models the TTT game-board of 3x3 cells.
+ * The ConnectFour.Board class models the TTT game-board of 3x3 cells.
  */
 public class BoardTT {
     // Define named constants for the grid

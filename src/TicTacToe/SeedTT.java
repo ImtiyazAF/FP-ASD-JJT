@@ -1,4 +1,4 @@
-package Seed;
+package TicTacToe;
 
 public enum SeedTT {
     CROSSTT("X"),

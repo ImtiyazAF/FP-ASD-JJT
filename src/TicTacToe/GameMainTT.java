@@ -1,12 +1,10 @@
-package GameMain;
+package TicTacToe;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import Board.BoardTT;
-import Seed.SeedTT;
-import State.StateTT;
+
 import java.io.File;
 import javax.sound.sampled.*;
 
