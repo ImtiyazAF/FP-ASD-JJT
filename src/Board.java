@@ -53,33 +53,21 @@ public class Board {
         // Update game board
         cells[selectedRow][selectedCol].content = player;
 
-        // Compute and return the new game state
-        if (cells[selectedRow][0].content == player  // 3-in-the-row
-                && cells[selectedRow][1].content == player
-                && cells[selectedRow][2].content == player
-                || cells[0][selectedCol].content == player // 3-in-the-column
-                && cells[1][selectedCol].content == player
-                && cells[2][selectedCol].content == player
-                || selectedRow == selectedCol     // 3-in-the-diagonal
-                && cells[0][0].content == player
-                && cells[1][1].content == player
-                && cells[2][2].content == player
-                || selectedRow + selectedCol == 2 // 3-in-the-opposite-diagonal
-                && cells[0][2].content == player
-                && cells[1][1].content == player
-                && cells[2][0].content == player) {
+        // Check if the player has won
+        if (hasWon(player, selectedRow, selectedCol)) {
             return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
-        } else {
-            // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
-            for (int row = 0; row < ROWS; ++row) {
-                for (int col = 0; col < COLS; ++col) {
-                    if (cells[row][col].content == Seed.NO_SEED) {
-                        return State.PLAYING; // still have empty cells
-                    }
+        }
+
+        // Check for a draw (all cells occupied)
+        for (int row = 0; row < ROWS; ++row) {
+            for (int col = 0; col < COLS; ++col) {
+                if (cells[row][col].content == Seed.NO_SEED) {
+                    return State.PLAYING; // Still have empty cells
                 }
             }
-            return State.DRAW; // no empty cell, it's a draw
         }
+
+        return State.DRAW; // No empty cells and no winner
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */
@@ -103,5 +91,80 @@ public class Board {
                 cells[row][col].paint(g);  // ask the cell to paint itself
             }
         }
+    }
+
+    /** Drops a piece in the specified column. Returns the row, or -1 if the column is full. */
+    public int dropPiece(Seed seed, int col) {
+        for (int row = ROWS - 1; row >= 0; row--) {
+            if (cells[row][col].content == Seed.NO_SEED) {
+                cells[row][col].content = seed; // Place the piece
+                return row; // Return the row where the piece was placed
+            }
+        }
+        return -1; // Column is full
+    }
+
+    /** Check if the specified player has won after placing a piece. */
+    public boolean hasWon(Seed seed, int row, int col) {
+        // Check horizontal
+        if (countConsecutive(seed, row, col, 0, 1) + countConsecutive(seed, row, col, 0, -1) >= 3) return true;
+
+        // Check vertical
+        if (countConsecutive(seed, row, col, 1, 0) >= 3) return true;
+
+        // Check diagonal (\)
+        if (countConsecutive(seed, row, col, 1, 1) + countConsecutive(seed, row, col, -1, -1) >= 3) return true;
+
+        // Check anti-diagonal (/)
+        if (countConsecutive(seed, row, col, 1, -1) + countConsecutive(seed, row, col, -1, 1) >= 3) return true;
+
+        return false; // No win
+    }
+
+    /** Counts consecutive pieces in one direction. */
+    private int countConsecutive(Seed seed, int row, int col, int rowDir, int colDir) {
+        int count = 0;
+        int r = row + rowDir;
+        int c = col + colDir;
+        while (r >= 0 && r < ROWS && c >= 0 && c < COLS && cells[r][c].content == seed) {
+            count++;
+            r += rowDir;
+            c += colDir;
+        }
+        return count;
+    }
+
+    /** Get the best move for the computer. */
+    public int[] getBestMove(Seed seed) {
+        // Try to win
+        for (int col = 0; col < COLS; col++) {
+            int row = dropPiece(seed, col); // Simulate move
+            if (row != -1 && hasWon(seed, row, col)) {
+                cells[row][col].content = Seed.NO_SEED; // Undo move
+                return new int[]{row, col};
+            }
+            if (row != -1) cells[row][col].content = Seed.NO_SEED; // Undo move
+        }
+
+        // Try to block opponent
+        Seed opponent = (seed == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+        for (int col = 0; col < COLS; col++) {
+            int row = dropPiece(opponent, col); // Simulate opponent's move
+            if (row != -1 && hasWon(opponent, row, col)) {
+                cells[row][col].content = Seed.NO_SEED; // Undo move
+                return new int[]{row, col}; // Block move
+            }
+            if (row != -1) cells[row][col].content = Seed.NO_SEED; // Undo move
+        }
+
+        // Otherwise, pick a random valid move
+        for (int col = 0; col < COLS; col++) {
+            int row = dropPiece(seed, col);
+            if (row != -1) {
+                cells[row][col].content = Seed.NO_SEED; // Undo move
+                return new int[]{row, col};
+            }
+        }
+        return null; // No valid moves
     }
 }
