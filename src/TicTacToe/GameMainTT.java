@@ -116,17 +116,4 @@ public class GameMainTT extends JPanel {
         }
     }
 
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame frame = new JFrame("Tic-Tac-Toe");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setContentPane(new GameMainTT()); // Tambahkan panel utama
-                frame.setSize(400, 400); // Ukuran frame
-                frame.setLocationRelativeTo(null); // Pusatkan frame
-                frame.setVisible(true); // Tampilkan frame
-            }
-        });
-    }
 }

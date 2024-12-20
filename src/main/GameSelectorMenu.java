@@ -26,12 +26,13 @@ public class GameSelectorMenu extends JFrame {
 
         cp.add(mainmenu, BorderLayout.CENTER);
 
-        //pack();
+        pack();
         setTitle("Game Selector");
-        setSize(800, 600);
+        //setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true); // Allow window resizing
         setVisible(true);
+        setLocationRelativeTo(null);
     }
 
     public JPanel mainMenu() {
@@ -70,9 +71,9 @@ public class GameSelectorMenu extends JFrame {
     }
 
     JPanel confGame(){
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel();
         ConnectFour.GameMain cgame = new ConnectFour.GameMain();
-        panel.add(cgame, BorderLayout.CENTER);
+        panel.add(cgame);
 
         return panel;
     }
