@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import Board.BoardTT;
 import Seed.SeedTT;
 import State.StateTT;
+import java.io.File;
+import javax.sound.sampled.*;
 
 public class GameMainTT extends JPanel {
     public static final int ROWS = 3; // Jumlah baris papan
@@ -37,6 +39,7 @@ public class GameMainTT extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         if (cells[r][c].getText().equals(" ") && currentState == StateTT.PLAYINGTT) {
                             cells[r][c].setText(currentPlayer.getIcon()); // Set simbol pemain
+                            playSound("eat.wav"); // Mainkan suara saat pemain menekan
                             board.stepGame(currentPlayer, r, c); // Update status papan
                             updateGameState(r, c); // Periksa status permainan
                             switchPlayer(); // Ganti pemain
@@ -51,6 +54,15 @@ public class GameMainTT extends JPanel {
         }
     }
 
+    private void setPlayerIcon(JButton button) {
+        // Set gambar berdasarkan pemain
+        if (currentPlayer == SeedTT.CROSSTT) {
+            button.setIcon(new ImageIcon(getClass().getResource("/image/cross.gif"))); // Gambar "X"
+        } else {
+            button.setIcon(new ImageIcon(getClass().getResource("/image/not.gif"))); // Gambar "O"
+        }
+    }
+
     private void switchPlayer() {
         currentPlayer = (currentPlayer == SeedTT.CROSSTT) ? SeedTT.NOUGHTTT : SeedTT.CROSSTT;
     }
@@ -58,10 +70,12 @@ public class GameMainTT extends JPanel {
     private void updateGameState(int row, int col) {
         if (board.checkWin(row, col, currentPlayer)) {
             currentState = (currentPlayer == SeedTT.CROSSTT) ? StateTT.CROSS_WONTT : StateTT.NOUGHT_WONTT;
+            playSound("explode.wav"); // Suara kemenangan
             JOptionPane.showMessageDialog(this, currentPlayer.getIcon() + " won!");
             resetGame();
         } else if (board.isDraw()) {
             currentState = StateTT.DRAWTT;
+            playSound("die.wav"); // Suara seri atau kalah
             JOptionPane.showMessageDialog(this, "It's a draw!");
             resetGame();
         }
@@ -88,6 +102,19 @@ public class GameMainTT extends JPanel {
             board.stepGame(SeedTT.NOUGHTTT, aiRow, aiCol); // Update papan dengan langkah AI
             updateGameState(aiRow, aiCol); // Periksa status permainan setelah AI bergerak
             switchPlayer(); // Ganti pemain
+        }
+    }
+
+    private void playSound(String soundFile) {
+        try {
+            // Load suara dari package sound
+            File sound = new File(getClass().getResource("/sound/" + soundFile).toURI());
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(sound);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start(); // Putar suara
+        } catch (Exception e) {
+            e.printStackTrace(); // Tangani kesalahan jika file suara tidak ditemukan
         }
     }
 
