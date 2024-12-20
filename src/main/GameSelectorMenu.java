@@ -30,7 +30,7 @@ public class GameSelectorMenu extends JFrame {
         setTitle("Game Selector");
         //setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true); // Allow window resizing
+        setResizable(false); // Allow window resizing
         setVisible(true);
         setLocationRelativeTo(null);
     }
