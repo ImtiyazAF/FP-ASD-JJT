@@ -9,55 +9,54 @@ import java.io.File;
 import javax.sound.sampled.*;
 
 public class GameMainTT extends JPanel {
-    public static final int ROWS = 3; // Jumlah baris papan
-    public static final int COLS = 3; // Jumlah kolom papan
+    public static final int ROWS = 3;
+    public static final int COLS = 3;
 
-    private JButton[][] cells = new JButton[ROWS][COLS]; // Tombol untuk papan permainan
-    private SeedTT currentPlayer = SeedTT.CROSSTT; // Pemain saat ini
-    private StateTT currentState = StateTT.PLAYINGTT; // Status permainan
-    private BoardTT board; // Papan permainan
-    private BoardTT.AIPlayer aiPlayer; // AI Pemain
+    private JButton[][] cells = new JButton[ROWS][COLS];
+    private SeedTT currentPlayer = SeedTT.CROSSTT;
+    private StateTT currentState = StateTT.PLAYINGTT;
+    private BoardTT board;
+    private BoardTT.AIPlayer aiPlayer;
 
     public GameMainTT() {
-        setLayout(new GridLayout(ROWS, COLS)); // Tata letak grid 3x3
+        setLayout(new GridLayout(ROWS, COLS));
         initBoard();
     }
 
     private void initBoard() {
-        board = new BoardTT(); // Inisialisasi papan permainan
-        aiPlayer = board.new AIPlayerTableLookup(board); // Inisialisasi AI
+        board = new BoardTT();
+        aiPlayer = board.new AIPlayerMinimax(board); // Change to Minimax AI for better logic
 
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
-                cells[row][col] = new JButton(" "); // Tombol kosong
-                cells[row][col].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 36)); // Font besar
-                final int r = row, c = col; // Koordinat sel
-                cells[row][col].addActionListener(new ActionListener() { // Tambahkan listener untuk tombol
+                cells[row][col] = new JButton(" ");
+                cells[row][col].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 36));
+                final int r = row, c = col;
+                cells[row][col].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (cells[r][c].getText().equals(" ") && currentState == StateTT.PLAYINGTT) {
-                            cells[r][c].setText(currentPlayer.getIcon()); // Set simbol pemain
-                            playSound("eat.wav"); // Mainkan suara saat pemain menekan
-                            board.stepGame(currentPlayer, r, c); // Update status papan
-                            updateGameState(r, c); // Periksa status permainan
-                            switchPlayer(); // Ganti pemain
+                            cells[r][c].setText(currentPlayer.getIcon());
+                            playSound("eat.wav");
+                            board.stepGame(currentPlayer, r, c);
+                            updateGameState(r, c);
+                            switchPlayer();
                             if (currentState == StateTT.PLAYINGTT) {
-                                aiMove(); // Giliran AI setelah pemain
+                                aiMove(); // Let AI play after player
                             }
                         }
                     }
                 });
-                add(cells[row][col]); // Tambahkan tombol ke panel
+                add(cells[row][col]);
             }
         }
     }
 
     private void setPlayerIcon(JButton button) {
-        // Set gambar berdasarkan pemain
         if (currentPlayer == SeedTT.CROSSTT) {
-            button.setIcon(new ImageIcon(getClass().getResource("/image/cross.gif"))); // Gambar "X"
+            button.setIcon(new ImageIcon(getClass().getResource("/image/cross.gif")));
         } else {
-            button.setIcon(new ImageIcon(getClass().getResource("/image/not.gif"))); // Gambar "O"
+            button.setIcon(new ImageIcon(getClass().getResource("/image/not.gif")));
         }
     }
 
@@ -68,52 +67,49 @@ public class GameMainTT extends JPanel {
     private void updateGameState(int row, int col) {
         if (board.checkWin(row, col, currentPlayer)) {
             currentState = (currentPlayer == SeedTT.CROSSTT) ? StateTT.CROSS_WONTT : StateTT.NOUGHT_WONTT;
-            playSound("explode.wav"); // Suara kemenangan
+            playSound("explode.wav");
             JOptionPane.showMessageDialog(this, currentPlayer.getIcon() + " won!");
             resetGame();
         } else if (board.isDraw()) {
             currentState = StateTT.DRAWTT;
-            playSound("die.wav"); // Suara seri atau kalah
+            playSound("die.wav");
             JOptionPane.showMessageDialog(this, "It's a draw!");
             resetGame();
         }
     }
 
     private void resetGame() {
-        board.newGame(); // Reset papan permainan
+        board.newGame();
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
-                cells[row][col].setText(" "); // Kosongkan semua sel
+                cells[row][col].setText(" ");
             }
         }
-        currentPlayer = SeedTT.CROSSTT; // Atur ulang pemain
-        currentState = StateTT.PLAYINGTT; // Set ulang status permainan
+        currentPlayer = SeedTT.CROSSTT;
+        currentState = StateTT.PLAYINGTT;
     }
 
-    // Fungsi untuk AI bergerak
     private void aiMove() {
         if (currentState == StateTT.PLAYINGTT) {
-            int[] aiMove = aiPlayer.move(); // AI memilih langkah
+            int[] aiMove = aiPlayer.move();
             int aiRow = aiMove[0];
             int aiCol = aiMove[1];
-            cells[aiRow][aiCol].setText(SeedTT.NOUGHTTT.getIcon()); // Set simbol AI
-            board.stepGame(SeedTT.NOUGHTTT, aiRow, aiCol); // Update papan dengan langkah AI
-            updateGameState(aiRow, aiCol); // Periksa status permainan setelah AI bergerak
-            switchPlayer(); // Ganti pemain
+            cells[aiRow][aiCol].setText(SeedTT.NOUGHTTT.getIcon());
+            board.stepGame(SeedTT.NOUGHTTT, aiRow, aiCol);
+            updateGameState(aiRow, aiCol);
+            switchPlayer();
         }
     }
 
     private void playSound(String soundFile) {
         try {
-            // Load suara dari package sound
             File sound = new File(getClass().getResource("/sound/" + soundFile).toURI());
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(sound);
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
-            clip.start(); // Putar suara
+            clip.start();
         } catch (Exception e) {
-            e.printStackTrace(); // Tangani kesalahan jika file suara tidak ditemukan
+            e.printStackTrace();
         }
     }
-
 }

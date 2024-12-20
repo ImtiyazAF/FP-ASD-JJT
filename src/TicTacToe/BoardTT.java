@@ -100,6 +100,7 @@ public class BoardTT {
         }
     }
 
+
     /** For debugging: Print the board state in console (optional for GUI). */
     public void paint() {
         for (int row = 0; row < ROWS; ++row) {
