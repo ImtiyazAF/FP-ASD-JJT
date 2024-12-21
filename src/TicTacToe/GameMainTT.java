@@ -26,6 +26,7 @@ public class GameMainTT extends JPanel {
     private StateTT currentState = StateTT.PLAYINGTT;
     private BoardTT board;
     private BoardTT.AIPlayer aiPlayer;
+    private SeedTT lastWinner = null; // Track the winner of the previous round
 
     public GameMainTT() {
         setLayout(new GridLayout(ROWS, COLS));
@@ -50,7 +51,7 @@ public class GameMainTT extends JPanel {
                             board.stepGame(currentPlayer, r, c);
                             updateGameState(r, c);
                             switchPlayer();
-                            if (currentState == StateTT.PLAYINGTT) {
+                            if (currentState == StateTT.PLAYINGTT && currentPlayer == SeedTT.NOUGHTTT) {
                                 aiMove(); // Let AI play after player
                             }
                         }
@@ -76,11 +77,13 @@ public class GameMainTT extends JPanel {
     private void updateGameState(int row, int col) {
         if (board.checkWin(row, col, currentPlayer)) {
             currentState = (currentPlayer == SeedTT.CROSSTT) ? StateTT.CROSS_WONTT : StateTT.NOUGHT_WONTT;
+            lastWinner = currentPlayer;
             playSound("explode.wav");
             JOptionPane.showMessageDialog(this, currentPlayer.getIcon() + " won!");
-            resetGame();
+            resetGame(); // Reset the board for the next round
         } else if (board.isDraw()) {
             currentState = StateTT.DRAWTT;
+            lastWinner = null;
             playSound("die.wav");
             JOptionPane.showMessageDialog(this, "It's a draw!");
             resetGame();
@@ -94,8 +97,16 @@ public class GameMainTT extends JPanel {
                 cells[row][col].setText(" ");
             }
         }
-        currentPlayer = SeedTT.CROSSTT;
-        currentState = StateTT.PLAYINGTT;
+
+        // Set the current player based on the last winner
+        if (lastWinner != null) {
+            currentPlayer = lastWinner; // The last winner starts the new round
+        } else {
+            // Default: Cross (Player) starts first, in case of a draw
+            currentPlayer = SeedTT.CROSSTT;
+        }
+
+        currentState = StateTT.PLAYINGTT; // Reset game state to playing
     }
 
     private void aiMove() {
@@ -106,7 +117,9 @@ public class GameMainTT extends JPanel {
             cells[aiRow][aiCol].setText(SeedTT.NOUGHTTT.getIcon());
             board.stepGame(SeedTT.NOUGHTTT, aiRow, aiCol);
             updateGameState(aiRow, aiCol);
-            switchPlayer();
+            if (currentState == StateTT.PLAYINGTT) {
+                switchPlayer(); // Only switch if the game is still playing
+            }
         }
     }
 
