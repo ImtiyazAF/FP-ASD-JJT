@@ -27,6 +27,8 @@ public class GameMainTT extends JPanel {
     private BoardTT board;
     private BoardTT.AIPlayer aiPlayer;
     private SeedTT lastWinner = null; // Track the winner of the previous round
+    private boolean isFirstMove;
+
 
     public GameMainTT() {
         setLayout(new GridLayout(ROWS, COLS));
@@ -50,12 +52,18 @@ public class GameMainTT extends JPanel {
                             playSound("eat.wav");
                             board.stepGame(currentPlayer, r, c);
                             updateGameState(r, c);
-                            switchPlayer();
+                            // Skip switching if it’s the very first move of the round
+                            if (!isFirstMove) {
+                                switchPlayer();
+                            } else {
+                                isFirstMove = false;
+                            }
                             if (currentState == StateTT.PLAYINGTT && currentPlayer == SeedTT.NOUGHTTT) {
-                                aiMove(); // Let AI play after player
+                                aiMove();
                             }
                         }
                     }
+
                 });
                 add(cells[row][col]);
             }
@@ -98,16 +106,22 @@ public class GameMainTT extends JPanel {
             }
         }
 
-        // Set the current player based on the last winner
         if (lastWinner != null) {
             currentPlayer = lastWinner; // The last winner starts the new round
         } else {
-            // Default: Cross (Player) starts first, in case of a draw
-            currentPlayer = SeedTT.CROSSTT;
+            currentPlayer = SeedTT.CROSSTT; // If draw, CROSS starts
         }
+        currentState = StateTT.PLAYINGTT;
 
-        currentState = StateTT.PLAYINGTT; // Reset game state to playing
+        // If the AI was the last winner (NOUGHTTT), force it to move now:
+        if (currentPlayer == SeedTT.NOUGHTTT) {
+            aiMove();
+            isFirstMove = false;
+        }
+        else isFirstMove = true;
     }
+
+
 
     private void aiMove() {
         if (currentState == StateTT.PLAYINGTT) {
